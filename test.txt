@@ -1,0 +1,65 @@
+'''import the needed modules here:'''
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import f1_score
+from xgboost import XGBClassifier
+import session_info
+ 
+X_train = pd.read_csv('x_train.csv')
+X_test = pd.read_csv('x_test.csv')
+y_train = pd.read_csv('y_train.csv')
+ 
+
+'''
+In order to have reproducible results, you need to set the 
+random states (a.k.a seeds) of the sources of randomness to
+a constant number. You can set the local seeds to a constant
+number in the respective place. If you have global seeds, 
+set them here:
+'''
+pass
+
+
+def train_then_test(x_train, y_train, x_test):
+    '''
+    This functions has the following inputs:
+     * x_train: which is a numpy list of the training data
+     * y_train: which is a numpy list of the corresponding labels for the given features
+     * x_test: which is a numpy list test data
+
+
+    Within the body of this function you need to build and train a
+    classifier for the given training data (x_train, y_train) and
+    then return the predicted labels for x_test.
+    Output: predicted_labels (can be a python list, numpy list, or pandas list of the predicted labels)
+
+    Notes:
+        Do not change the name of this function.
+        Do not add new parameters to this function.
+        Do not remove the parameters of this function (x_train, y_train, x_test)
+        Do not change the order of the parameters of this function
+        If x_test contains 100 rows of data, predicted_labels needs to have 100 rows of predicted labels
+    '''
+    X_train_s, X_test_s, y_train_s, y_test_s = train_test_split( X_train, y_train, test_size=(25/100), random_state=42)
+    model=XGBClassifier( 
+          n_estimators=5000,
+          random_state=42,
+          scale_pos_weight=100
+          )
+    model.fit(X_train_s, y_train_s)
+    y_pred = model.predict(X_test_s)
+    predictions = [round(value) for value in y_pred]
+    f1_score_result = f1_score(predictions,y_test_s) * 100
+    print(f1_score_result)
+    predictions=model.predict(X_test)
+
+    # return trained_model.predict(x_test)
+    return predictions
+
+
+if __name__ == '__main__':
+    # You need to do all the function calls for testing purposes in this scope:
+    predictions=train_then_test(X_train, y_train, X_test)
+    test_df = pd.DataFrame({'Id': range (0,len(predictions)), 'Predicted' : predictions})
+    test_df.to_csv("submission.csv", index = False)

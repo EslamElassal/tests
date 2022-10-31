@@ -1,0 +1,26 @@
+class Solution(object):
+    def search(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
+        oddFlag=False
+        
+        if len(nums)%2!=0:
+            oddFlag=True
+            
+        for i in range(len(nums)/2):
+            if nums[i]==target  :
+                return i
+            elif  nums[len(nums)-1-i]==target:
+                return len(nums)-1-i
+        if oddFlag==True:
+            if nums[(len(nums)/2)]==target:
+                return len(nums)/2
+            else:
+                return -1
+        else:
+            return -1
+            
+        
